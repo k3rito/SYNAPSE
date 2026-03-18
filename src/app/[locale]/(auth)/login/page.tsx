@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Link, useRouter } from '@/navigation';
 import { createClient } from '@/utils/supabase/client';
+import { getURL } from '@/utils/url';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { useLoading } from '@/components/ui/LoadingProgress';
 import { ArrowRight, Loader2, Sparkles, Terminal, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
@@ -67,7 +68,7 @@ export default function LoginPage() {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/${locale}/dashboard`,
+          redirectTo: `${getURL()}${locale}/dashboard`,
         },
       });
       if (oauthError) {

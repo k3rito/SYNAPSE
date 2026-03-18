@@ -29,8 +29,8 @@ function ChatbotModel() {
 // useGLTF.preload('/models/chatbot.glb');
 
 export const ChatbotOrb = () => {
-  // Force static fallback until chatbot.glb is available in public/models
-  const isWebGLSupported = false;
+  // Use actual WebGL support hook or check
+  const isWebGLSupported = useWebGLSupport();
 
   return (
     <div className="w-[50px] h-[50px] relative flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
@@ -46,8 +46,6 @@ export const ChatbotOrb = () => {
             <div className="w-1/2 h-1/2 bg-deep-black rounded-full shadow-[inset_0_0_5px_#22D3EE]" />
           </div>
         ) : (
-          /* Commented out to prevent 404 logs */
-          /*
           <Canvas camera={{ position: [0, 0, 4.5], fov: 40 }} gl={{ alpha: true }}>
             <ambientLight intensity={2.5} />
             <directionalLight position={[5, 5, 5]} intensity={2} color="#ffffff" />
@@ -56,8 +54,6 @@ export const ChatbotOrb = () => {
               <ChatbotModel />
             </Suspense>
           </Canvas>
-          */
-          null
         )}
       </div>
     </div>

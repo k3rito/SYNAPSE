@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useRouter } from '@/navigation';
 import { createClient } from '@/utils/supabase/client';
+import { getURL } from '@/utils/url';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { useLoading } from '@/components/ui/LoadingProgress';
 import { 
@@ -60,7 +61,7 @@ export default function SignupPage() {
           full_name: fullName,
           role: 'user', // Default role
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getURL()}api/auth/callback`,
       },
     });
 
@@ -102,7 +103,7 @@ export default function SignupPage() {
     const { error: resendError } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+        emailRedirectTo: `${getURL()}api/auth/callback`,
       },
     });
     
