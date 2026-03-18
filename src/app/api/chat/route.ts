@@ -13,13 +13,7 @@ export async function POST(req: Request) {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch (error) {
-            // Ignored in Route Handlers since proxy.ts handles the refresh
-          }
+          // Ignored in Route Handlers since middleware handles the refresh
         },
       },
     }

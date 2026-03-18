@@ -44,6 +44,7 @@ export const Chatbot = () => {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           message: userMessage,
           lessonContext: currentLesson
