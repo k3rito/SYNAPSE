@@ -1,0 +1,232 @@
+{
+  "Navigation": {
+    "dashboard": "لوحة التحكم",
+    "startLearning": "ابدأ التعلم",
+    "admin": "الإدارة",
+    "askAi": "اسأل الذكاء الاصطناعي"
+  },
+  "Dashboard": {
+    "welcome": "مرحباً بك مجدداً، أيها المطور.",
+    "subtitle": "هل أنت مستعد لمواصلة توسعك المعرفي؟",
+    "rank": "الرتبة الحالية",
+    "nodesCleared": "النقاط المكتملة",
+    "completionRate": "معدل الإنجاز",
+    "focusTime": "وقت التركيز",
+    "activeNodes": "نقاط التعلم النشطة",
+    "resume": "استئناف النقطة",
+    "initialize": "تجهيز المختبر",
+    "recentNodes": "المختبرات المنشأة مؤخراً",
+    "cleared": "تم الإنجاز",
+    "recommended": "المسارات المقترحة"
+  },
+  "Common": {
+    "back": "رجوع",
+    "search": "بحث",
+    "loading": "جاري المزامنة...",
+    "next": "الوحدة التالية",
+    "review": "مراجعة",
+    "initialize": "دخول"
+  },
+  "Chatbot": {
+    "title": "مساعد سينابس",
+    "placeholder": "اسأل سينابس أي شيء...",
+    "connectionFailed": "فشل الاتصال بـ سينابس AI.",
+    "networkFailure": "فشل شبكة حرج. AI غير متصل.",
+    "typing": "جاري المعالجة..."
+  },
+  "Curriculum": {
+    "network-architecture": {
+      "phase0": {
+        "title": "المرحلة 0: عقلية الشبكات",
+        "description": "فهم الشبكات بما يتجاوز الاستخدام، LAN/WAN/الإنترنت. الشبكة = الأجهزة + البروتوكولات + البيانات."
+      },
+      "phase1": {
+        "title": "المرحلة 1: الأساسيات",
+        "description": "طبقات نموذج OSI من الفيزيائية إلى التطبيق، بنية TCP/IP، عناوين IP، الشبكات الفرعية، البوابة، وDNS."
+      },
+      "phase2": {
+        "title": "المرحلة 2: بروتوكولات الشبكة",
+        "description": "لغة الإنترنت: HTTP/HTTPS، FTP، SSH، DHCP، DNS. الأدوات: Wireshark، Ping، Traceroute."
+      },
+      "phase3": {
+        "title": "المرحلة 3: التطبيق العملي",
+        "description": "الإعداد العملي لـ LAN، توصيل الأجهزة، تكوين الراوتر. الأدوات: Cisco Packet Tracer، GNS3."
+      },
+      "phase4": {
+        "title": "المرحلة 4: التعمق المتوسط",
+        "description": "تقسيم الشبكات (CIDR)، التوجيه (Static، Dynamic - RIP، OSPF)، التبديل (VLAN، جداول MAC)."
+      },
+      "phase5": {
+        "title": "المرحلة 5: الشبكات المتقدمة",
+        "description": "NAT، VPN، الجدار الناري، موازنة الحمل. الأدوات: pfSense، OpenVPN."
+      },
+      "phase6": {
+        "title": "المرحلة 6: أمن الشبكات",
+        "description": "التنصت، هجمات MITM، قواعد الجدار الناري، أنظمة IDS/IPS. الأدوات: Nmap، Kali Linux."
+      }
+    },
+    "full-stack-engineering": {
+      "mindset-architecture": {
+        "title": "المرحلة 0: الأساس العقلي للهندسة",
+        "description": "فهم تصميم الأنظمة قبل الكود: العميل مقابل الخادم، دورة حياة الطلب/الاستجابة، استمرارية البيانات."
+      },
+      "frontend-mastery": {
+        "title": "المرحلة 1: هيمنة الفرونت إند",
+        "description": "الثالوث: HTML (الهيكل)، CSS (التصميم)، JavaScript (المنطق). React (المكونات، الحالة، الخطافات، التوجيه)."
+      },
+      "backend-core": {
+        "title": "المرحلة 2: محرك الباك إند",
+        "description": "التقنيات الأساسية: Node.js + Express.js. المنطق المتقدم: REST APIs، المصادقة، أنماط الوسيط."
+      },
+      "database-management": {
+        "title": "المرحلة 3: التحكم في البيانات",
+        "description": "العلائقية (SQL): PostgreSQL. غير العلائقية (NoSQL): MongoDB. الإتقان: عمليات CRUD، العلاقات، الفهرسة."
+      },
+      "integration-logic": {
+        "title": "المرحلة 4: الربط الكامل",
+        "description": "الجسر: ربط الواجهة الأمامية بواجهات برمجة الباك إند. تدفق البيانات من البداية إلى النهاية."
+      },
+      "pro-tools": {
+        "title": "المرحلة 5: أدوات الاحتراف",
+        "description": "الاختبار: Postman. ديف أوبس لايت: Docker (الحاويات)، Nginx (البروكسي العكسي)."
+      },
+      "deployment-cicd": {
+        "title": "المرحلة 6: النشر والتوسع",
+        "description": "البنية التحتية: الاستضافة، النطاقات، أنابيب CI/CD. المنصات: Vercel و Railway."
+      },
+      "advanced-architecture": {
+        "title": "المرحلة 7: ما وراء الأساسيات",
+        "description": "الأمن: JWT و OAuth. الوقت الفعلي: WebSockets. التوسع: الخدمات المصغرة والتخزين المؤقت (Redis)."
+      }
+    },
+    "web3-development": {
+      "web3-mindset": {
+        "title": "المرحلة 0: الفهم العميق لـ Web3",
+        "description": "الانتقال من Web2 (التحكم المركزي) إلى Web3 (ملكية المستخدم): البلوكشين واللامركزية."
+      },
+      "blockchain-protocols": {
+        "title": "المرحلة 1: أساس البلوكشين",
+        "description": "الميكانيكا: الكتل (Blocks)، التعدين، رسوم الغاز (Gas Fees)، والتحويلات. شبكات Ethereum و Polygon."
+      },
+      "wallets-identity": {
+        "title": "المرحلة 2: العملات والمحافظ",
+        "description": "الأمن: المفاتيح العامة والخاصة، محافظ MetaMask، وتوقيع المعاملات الرقمية."
+      },
+      "solidity-mastery": {
+        "title": "المرحلة 3: إتقان لغة Solidity",
+        "description": "اللغة: أساسيات Solidity. الإتقان: المتغيرات، الدوال، المغيرات (Modifiers)، ومعالجة الأخطاء."
+      },
+      "web3-dev-tools": {
+        "title": "المرحلة 4: أدوات التطوير",
+        "description": "البيئة: Remix IDE، إطار عمل Hardhat، والاختبار المحلي باستخدام Ganache."
+      },
+      "dapp-frontend-integration": {
+        "title": "المرحلة 5: الربط مع الواجهة الأمامية",
+        "description": "الجسر: React + Ethers.js. ربط المحفظة والتفاعل المباشر مع العقود الذكية."
+      },
+      "web3-projects": {
+        "title": "المرحلة 6: مشاريع DApps حقيقية",
+        "description": "التطبيق: متاجر NFT، عملات ERC-20 مخصصة، وأنظمة التصويت اللامركزية (DAOs)."
+      },
+      "advanced-defi-l2": {
+        "title": "المرحلة 7: التعمق في DeFi و L2",
+        "description": "الأنظمة: السيولة والإقراض، توسع الطبقة الثانية (Arbitrum/Optimism)، وأدوات Chainlink."
+      },
+      "web3-security-auditing": {
+        "title": "المرحلة 8: الأمن والتدقيق",
+        "description": "الدرع: تدقيق العقود الذكية، هجمات Reentrancy، والثغرات الشائعة في عالم Web3."
+      }
+    },
+    "ai-machine-learning": {
+      "ai-vs-programming": {
+        "title": "المرحلة 0: كيف تفكر الآلة",
+        "description": "فهم التحول الفكري: البرمجة التقليدية مقابل منطق التعلم الآلي (Machine Learning)."
+      },
+      "mathematics-for-ai": {
+        "title": "المرحلة 1: الأساس الرياضي",
+        "description": "الأعمدة: الجبر الخطي، الاحتمالات والإحصاء، وحساب التفاضل والتكامل للتحسين."
+      },
+      "python-data-science-stack": {
+        "title": "المرحلة 2: لغة التحكم",
+        "description": "المعايير الصناعية: لغة Python (NumPy, Pandas, Matplotlib) لعلوم البيانات."
+      },
+      "data-analysis-eda": {
+        "title": "المرحلة 3: تحليل البيانات (EDA)",
+        "description": "الإتقان: تنظيف البيانات، استكشاف الأنماط، وبيئة Jupyter Notebooks."
+      },
+      "machine-learning-fundamentals": {
+        "title": "المرحلة 4: قلب الذكاء الاصطناعي",
+        "description": "أنواع التعلم: الخاضع للإشراف، غير الخاضع للإشراف، والتعلم التعزيزي (Scikit-learn)."
+      },
+      "deep-learning-neural-networks": {
+        "title": "المرحلة 5: الذكاء العميق والشبكات",
+        "description": "التقنيات: TensorFlow, PyTorch, ANN, CNN, RNN, والـ Transformers."
+      },
+      "ai-real-world-applications": {
+        "title": "المرحلة 6: تطبيقات الذكاء الاصطناعي",
+        "description": "المجالات: رؤية الكمبيوتر، معالجة اللغات الطبيعية (NLP)، والتعرف على الكلام."
+      },
+      "ai-projects-lab": {
+        "title": "المرحلة 7: بناء المشاريع العصبية",
+        "description": "التطبيق: مصنفات الصور، أنظمة التوصية، وبناء روبوتات المحادثة الخاصة."
+      },
+      "ai-model-deployment": {
+        "title": "المرحلة 8: النشر والسحابة",
+        "description": "الإنتاج: FastAPI، النشر السحابي (AWS/GCP)، ومشاركة النماذج عبر Hugging Face."
+      }
+    },
+    "data-engineering": {
+      "data-mindset": {
+        "title": "المرحلة 0: الأساس العقلي (الفهم العقلي)",
+        "description": "فهم كيفية تدفق البيانات عبر الأنظمة. بدون هندسة البيانات، لا يوجد ذكاء اصطناعي أو تحليلات."
+      },
+      "data-core-fundamentals": {
+        "title": "المرحلة 1: الأساسيات الجوهرية (الأساسيات)",
+        "description": "إتقان SQL، برمجة Linux/Bash، وPython لمعالجة البيانات."
+      },
+      "etl-mastery": {
+        "title": "المرحلة 2: قلب البيانات - ETL (قلب الـ Data Engineering)",
+        "description": "إتقان عمليات ETL: الاستخراج، التحويل، والتحميل."
+      },
+      "data-engineering-tools": {
+        "title": "المرحلة 3: الأدوات الحديثة (أدوات الـ Data Engineering)",
+        "description": "استخدام Airflow للتنسيق، Kafka للتدفق، وSpark للمعالجة."
+      },
+      "data-warehousing": {
+        "title": "المرحلة 4: مستودعات البيانات (تخزين البيانات الضخمة)",
+        "description": "تنظيم البيانات للاستعلامات التحليلية الضخمة باستخدام BigQuery و Redshift."
+      },
+      "big-data-systems": {
+        "title": "المرحلة 5: أنظمة البيانات الضخمة (الأنظمة الموزعة)",
+        "description": "بنية الأنظمة الموزعة ومعالجة البيانات بالدفعة مقابل التدفق."
+      },
+      "data-pipelines-architecture": {
+        "title": "المرحلة 6: بناء خطوط أنابيب البيانات (بناء الأنظمة)",
+        "description": "بناء أنظمة متكاملة: من الواجهة البرمجية إلى قاعدة البيانات إلى لوحة التحكم."
+      },
+      "cloud-data-engineering": {
+        "title": "المرحلة 7: هندسة بيانات السحابة (السحابة الرقمية)",
+        "description": "استخدام AWS و Google Cloud (GCP) لبناء بنية تحتية سحابية للبيانات."
+      },
+      "advanced-data-governance": {
+        "title": "المرحلة 8: الحوكمة المتقدمة (التعمق والجودة)",
+        "description": "حوكمة البيانات، مراقبة الجودة، وإدارة بحيرات البيانات مقابل المستودعات."
+      }
+    },
+    "offlineTitle": "المسار غير متصل",
+    "offlineDesc": "هذا المستوى من الصعوبة لم يتم تهيئته بعد.",
+    "returnToHub": "العودة إلى المركز",
+    "masteryFlow": "تدفق الإتقان",
+    "orderedSequence": "تسلسل تعليمي مرتب لمستوى",
+    "module": "وحدة",
+    "cleared": "مكتملة",
+    "deepSearch": "بحث عميق",
+    "selectDifficulty": "اختر مستوى الصعوبة",
+    "specializedDifficulty": "منهج متخصص لـ",
+    "masteryIn": "إتقان في",
+    "initializeTier": "بدء المستوى",
+    "backToDifficulty": "العودة إلى مستوى الصعوبة",
+    "activePhases": "مراحل التعلم النشطة",
+    "noPhases": "لم يتم اكتشاف مراحل لهذا المستوى من الصعوبة بعد."
+  }
+}

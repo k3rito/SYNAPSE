@@ -1,0 +1,232 @@
+{
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "startLearning": "Start Learning",
+    "admin": "Admin",
+    "askAi": "Ask AI"
+  },
+  "Dashboard": {
+    "welcome": "Welcome back, Developer.",
+    "subtitle": "Ready to continue your cognitive expansion?",
+    "rank": "Current Rank",
+    "nodesCleared": "Nodes Cleared",
+    "completionRate": "Completion Rate",
+    "focusTime": "Focus Time",
+    "activeNodes": "Active Learning Nodes",
+    "resume": "Resume Node",
+    "initialize": "Setup Lab",
+    "recentNodes": "Recent Lab Sessions",
+    "cleared": "Completed",
+    "recommended": "Recommended Tracks"
+  },
+  "Common": {
+    "back": "Back",
+    "search": "Search",
+    "loading": "Syncing Progress...",
+    "next": "Next Module",
+    "review": "Review",
+    "initialize": "Initialize"
+  },
+  "Chatbot": {
+    "title": "Synapse Assistant",
+    "placeholder": "Ask Synapse AI anything...",
+    "connectionFailed": "Connection to Synapse AI failed.",
+    "networkFailure": "Network critical failure. AI offline.",
+    "typing": "Processing..."
+  },
+  "Curriculum": {
+    "network-architecture": {
+      "phase0": {
+        "title": "Phase 0: Networking Mindset",
+        "description": "Understanding networks beyond usage, LAN/WAN/Internet. Network = Devices + Protocols + Data."
+      },
+      "phase1": {
+        "title": "Phase 1: Fundamentals",
+        "description": "OSI Model Layers (Physical to Application), TCP/IP architecture, IP Addresses, Subnet, Gateway, DNS."
+      },
+      "phase2": {
+        "title": "Phase 2: Network Protocols",
+        "description": "The language of the internet: HTTP/HTTPS, FTP, SSH, DHCP, DNS. Tools: Wireshark, Ping, Traceroute."
+      },
+      "phase3": {
+        "title": "Phase 3: Hands-on Application",
+        "description": "Practical setup of LAN, device connection, Router configuration. Tools: Cisco Packet Tracer, GNS3."
+      },
+      "phase4": {
+        "title": "Phase 4: Intermediate Deep Dive",
+        "description": "Subnetting (CIDR, Network/Broadcast calculation), Routing (Static, Dynamic - RIP, OSPF), Switching (VLAN, MAC Address Tables)."
+      },
+      "phase5": {
+        "title": "Phase 5: Advanced Networking",
+        "description": "NAT, VPN, Firewall, Load Balancing. Tools: pfSense, OpenVPN."
+      },
+      "phase6": {
+        "title": "Phase 6: Network Security",
+        "description": "Sniffing, MITM attacks, Firewall Rules, IDS/IPS. Tools: Nmap, Kali Linux."
+      }
+    },
+    "full-stack-engineering": {
+      "mindset-architecture": {
+        "title": "Phase 0: The Engineering Mindset",
+        "description": "Understanding System Design before Code: Client vs Server, Request/Response Lifecycle, Data Persistence (Storage/Retrieval)."
+      },
+      "frontend-mastery": {
+        "title": "Phase 1: Frontend Dominance",
+        "description": "The Trinity: HTML (Structure), CSS (Design), JavaScript (Logic). Framework: React (Components, State/Props, Hooks, Routing)."
+      },
+      "backend-core": {
+        "title": "Phase 2: The Backend Engine",
+        "description": "Primary Stack: Node.js + Express.js. Advanced Logic: REST APIs (JSON), Authentication, Middleware Patterns."
+      },
+      "database-management": {
+        "title": "Phase 3: Data Control",
+        "description": "Relational (SQL): PostgreSQL/MySQL. NoSQL: MongoDB. Mastery: CRUD Operations, Relationships, Indexing."
+      },
+      "integration-logic": {
+        "title": "Phase 4: Full-Stack Integration",
+        "description": "The Bridge: Connecting Frontend to Backend APIs. Data Flow: Fetching, Processing, and Storing end-to-end."
+      },
+      "pro-tools": {
+        "title": "Phase 5: Professional Toolkit",
+        "description": "Testing: Postman for API testing. DevOps Lite: Docker (Containerization), Nginx (Reverse Proxy)."
+      },
+      "deployment-cicd": {
+        "title": "Phase 6: Deployment & Scaling",
+        "description": "Infrastructure: Hosting, Domains, CI/CD Pipelines. Platforms: Vercel (Frontend), Railway (Backend)."
+      },
+      "advanced-architecture": {
+        "title": "Phase 7: Beyond the Basics",
+        "description": "Security: JWT & OAuth. Real-time: WebSockets (Socket.io). Scale: Microservices & Caching (Redis)."
+      }
+    },
+    "web3-development": {
+      "web3-mindset": {
+        "title": "Phase 0: The Web3 Mindset",
+        "description": "Transitioning from Web2 to Web3: Decentralization, Blockchain, and Ownership."
+      },
+      "blockchain-protocols": {
+        "title": "Phase 1: Blockchain Protocols",
+        "description": "The Mechanics: Blocks, Mining, Gas Fees, and Transactions. Ethereum & Polygon."
+      },
+      "wallets-identity": {
+        "title": "Phase 2: Assets & Identity",
+        "description": "Security: Public/Private Keys, Wallets (MetaMask), and Signing Transactions."
+      },
+      "solidity-mastery": {
+        "title": "Phase 3: Smart Contracts Core",
+        "description": "Language: Solidity basics. Mastery: Variables, Functions, Modifiers, and Error Handling."
+      },
+      "web3-dev-tools": {
+        "title": "Phase 4: Developer Ecosystem",
+        "description": "Tools: Remix IDE, Hardhat framework, and local testing with Ganache."
+      },
+      "dapp-frontend-integration": {
+        "title": "Phase 5: DApp Integration",
+        "description": "The Bridge: React + Ethers.js. Connect Wallet and Smart Contract Interaction."
+      },
+      "web3-projects": {
+        "title": "Phase 6: Real-World DApps",
+        "description": "Builds: NFT Marketplaces, ERC-20 Tokens, and DAO Governance Systems."
+      },
+      "advanced-defi-l2": {
+        "title": "Phase 7: Advanced DeFi & L2",
+        "description": "Ecosystems: Liquidity, Layer 2 Scaling (Arbitrum/Optimism), and Oracles (Chainlink)."
+      },
+      "web3-security-auditing": {
+        "title": "Phase 8: Security & Auditing",
+        "description": "The Shield: Smart Contract Auditing, Reentrancy Attacks, and Common Vulnerabilities."
+      }
+    },
+    "ai-machine-learning": {
+      "ai-vs-programming": {
+        "title": "Phase 0: The AI Mindset",
+        "description": "Understanding the paradigm shift: Traditional Programming vs Machine Learning logic."
+      },
+      "mathematics-for-ai": {
+        "title": "Phase 1: The Mathematical Armor",
+        "description": "The Pillars: Linear Algebra, Probability, Statistics, and Calculus for optimization."
+      },
+      "python-data-science-stack": {
+        "title": "Phase 2: The Control Languages",
+        "description": "Industry Standard: Python (NumPy, Pandas, Matplotlib) for data science."
+      },
+      "data-analysis-eda": {
+        "title": "Phase 3: Data Handling & EDA",
+        "description": "Mastery: Data Cleaning, Exploratory Data Analysis, and Jupyter Notebooks."
+      },
+      "machine-learning-fundamentals": {
+        "title": "Phase 4: Machine Learning Core",
+        "description": "The Learning Types: Supervised, Unsupervised, and Reinforcement Learning (Scikit-learn)."
+      },
+      "deep-learning-neural-networks": {
+        "title": "Phase 5: Deep Learning & Neural Nets",
+        "description": "The Tech Stack: TensorFlow, PyTorch, ANN, CNN, RNN, and Transformers."
+      },
+      "ai-real-world-applications": {
+        "title": "Phase 6: AI Applications",
+        "description": "Fields: Computer Vision, Natural Language Processing, and Speech Recognition."
+      },
+      "ai-projects-lab": {
+        "title": "Phase 7: Neural Projects",
+        "description": "Practical Builds: Classifiers, Recommendation Systems, and custom Chatbots."
+      },
+      "ai-model-deployment": {
+        "title": "Phase 8: Deployment & Cloud",
+        "description": "Production: FastAPI, Cloud Deployment (AWS/GCP), and Hugging Face."
+      }
+    },
+    "data-engineering": {
+      "data-mindset": {
+        "title": "Phase 0: The Data Mindset",
+        "description": "Understanding how data flows through systems. Structured vs Unstructured data."
+      },
+      "data-core-fundamentals": {
+        "title": "Phase 1: The Core Fundamentals",
+        "description": "SQL mastery, Linux/Bash scripting, and Python for data manipulation."
+      },
+      "etl-mastery": {
+        "title": "Phase 2: The Heart of Data - ETL",
+        "description": "Extract, Transform, and Load: The core of the data pipeline."
+      },
+      "data-engineering-tools": {
+        "title": "Phase 3: The Modern Toolkit",
+        "description": "Orchestration (Airflow), Streaming (Kafka), and Processing (Spark)."
+      },
+      "data-warehousing": {
+        "title": "Phase 4: Data Warehousing",
+        "description": "Organizing data for massive analytical queries with BigQuery and Redshift."
+      },
+      "big-data-systems": {
+        "title": "Phase 5: Big Data Systems",
+        "description": "Distributed Systems architecture and Batch vs. Streaming processing."
+      },
+      "data-pipelines-architecture": {
+        "title": "Phase 6: Building Data Pipelines",
+        "description": "API to Database to Dashboard: Real-time Kafka + Spark pipelines."
+      },
+      "cloud-data-engineering": {
+        "title": "Phase 7: Cloud Data Engineering",
+        "description": "AWS and Google Cloud (GCP) S3, Serverless, and Cloud Compute."
+      },
+      "advanced-data-governance": {
+        "title": "Phase 8: Advanced Governance",
+        "description": "Data Lakes vs. Warehouses, Governance, Quality Control, and Monitoring."
+      }
+    },
+    "offlineTitle": "Roadmap Offline",
+    "offlineDesc": "This specific difficulty tier is not yet configured.",
+    "returnToHub": "Return to Hub",
+    "masteryFlow": "Mastery Flow",
+    "orderedSequence": "Ordered learning sequence for",
+    "module": "Module",
+    "cleared": "Cleared",
+    "deepSearch": "Deep Search",
+    "selectDifficulty": "Select Difficulty Level",
+    "specializedDifficulty": "Specialized curriculum for",
+    "masteryIn": "mastery in",
+    "initializeTier": "Initialize Tier",
+    "backToDifficulty": "Back to Difficulty",
+    "activePhases": "Active Learning Phases",
+    "noPhases": "No phases discovered for this difficulty tier yet."
+  }
+}
