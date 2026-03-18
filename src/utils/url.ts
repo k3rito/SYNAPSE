@@ -11,8 +11,8 @@ export const getURL = () => {
   // Make sure to include `https://` when not localhost.
   url = url.includes('http') ? url : `https://${url}`;
   
-  // Make sure to include a trailing `/`.
-  url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+  // Ensure the URL has EXACTLY one trailing slash
+  url = url.replace(/\/+$/, '') + '/';
   
   return url;
 };

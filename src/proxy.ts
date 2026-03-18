@@ -14,6 +14,12 @@ export default async function middleware(request: NextRequest) {
     ? NextResponse.next({ request }) 
     : intlMiddleware(request);
 
+  // Set initial CSP headers
+  response.headers.set(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' *.supabase.co; frame-src 'self'; media-src 'self' data: blob:; object-src 'none';"
+  );
+
   // 2. Setup Supabase Client with full cookie sync
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -52,14 +58,22 @@ export default async function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
       const locale = pathname.split('/')[1] || 'ar';
       url.pathname = `/${locale}/dashboard`;
-      return Response.redirect(url);
+      const redirectResponse = NextResponse.redirect(url);
+      response.cookies.getAll().forEach(cookie => {
+        redirectResponse.cookies.set(cookie);
+      });
+      return redirectResponse;
     }
 
     if (isProtectedRoute && !user) {
       const url = request.nextUrl.clone();
       const locale = pathname.split('/')[1] || 'ar';
       url.pathname = `/${locale}/login`;
-      return Response.redirect(url);
+      const redirectResponse = NextResponse.redirect(url);
+      response.cookies.getAll().forEach(cookie => {
+        redirectResponse.cookies.set(cookie);
+      });
+      return redirectResponse;
     }
 
     // Role-based protection for admin
@@ -67,7 +81,11 @@ export default async function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
       const locale = pathname.split('/')[1] || 'ar';
       url.pathname = `/${locale}/dashboard`;
-      return Response.redirect(url);
+      const redirectResponse = NextResponse.redirect(url);
+      response.cookies.getAll().forEach(cookie => {
+        redirectResponse.cookies.set(cookie);
+      });
+      return redirectResponse;
     }
   }
 

@@ -46,7 +46,15 @@ export const ChatbotOrb = () => {
             <div className="w-1/2 h-1/2 bg-deep-black rounded-full shadow-[inset_0_0_5px_#22D3EE]" />
           </div>
         ) : (
-          <Canvas camera={{ position: [0, 0, 4.5], fov: 40 }} gl={{ alpha: true }}>
+          <Canvas 
+            camera={{ position: [0, 0, 4.5], fov: 40 }} 
+            gl={{ 
+              alpha: true,
+              preserveDrawingBuffer: true, 
+              powerPreference: "high-performance",
+              antialias: true 
+            }}
+          >
             <ambientLight intensity={2.5} />
             <directionalLight position={[5, 5, 5]} intensity={2} color="#ffffff" />
             <directionalLight position={[-5, -5, -5]} intensity={1.5} color="#22D3EE" />
