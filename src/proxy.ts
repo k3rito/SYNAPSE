@@ -101,8 +101,10 @@ export const config = {
      * - favicon.ico (favicon file)
      * - auth/callback (Supabase PKCE flow)
      * - api routes
+     * - models folder (GLB assets)
      * - assets folder (svg, png, etc)
+     * - service worker
      */
-    '/((?!api|_next/static|_next/image|auth/callback|favicon.ico|assets|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|auth/callback|favicon.ico|models|assets|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
