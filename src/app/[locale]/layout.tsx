@@ -35,6 +35,7 @@ export const metadata: Metadata = {
 import { LoadingProvider } from '@/components/ui/LoadingProgress';
 import { GamificationOverlay } from '@/components/ui/GamificationOverlay';
 import { AuthStateListener } from '@/components/auth/AuthStateListener';
+import { Analytics } from '@vercel/analytics/next';
 
 export default async function RootLayout({
   children,
@@ -72,6 +73,7 @@ export default async function RootLayout({
             <GamificationOverlay />
           </LoadingProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
