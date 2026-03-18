@@ -27,18 +27,20 @@ function ChatbotModel({ isHighPerf }: { isHighPerf: boolean }) {
 
       // 3. Mouse Tracking (Only on Desktop/HighPerf)
       if (isHighPerf) {
-        targetRotation.current.y = (pointer.x * Math.PI) / 8;
-        targetRotation.current.x = -(pointer.y * Math.PI) / 12;
+        // High Intensity Tracking
+        targetRotation.current.y = (pointer.x * Math.PI) / 2.5; 
+        targetRotation.current.x = -(pointer.y * Math.PI) / 3.5;
         
+        // Smooth but very responsive interpolation (0.15 lerp)
         modelRef.current.rotation.y = THREE.MathUtils.lerp(
           modelRef.current.rotation.y, 
-          targetRotation.current.y + (state.clock.elapsedTime * 0.1), // Base rotation + tracking
-          0.1
+          targetRotation.current.y + (state.clock.elapsedTime * 0.05), // Subtle base rotation
+          0.15
         );
         modelRef.current.rotation.x = THREE.MathUtils.lerp(
           modelRef.current.rotation.x,
           targetRotation.current.x,
-          0.1
+          0.15
         );
       } else {
         modelRef.current.rotation.y += 0.005;
@@ -63,7 +65,7 @@ export const ChatbotOrb = () => {
   return (
     <div 
       id="chatbot-container"
-      className="w-[89px] h-[89px] relative flex items-center justify-center cursor-pointer transition-all duration-300"
+      className="w-[10vw] h-[10vw] min-w-[70px] min-h-[70px] max-w-[150px] max-h-[150px] relative flex items-center justify-center cursor-pointer transition-all duration-300"
     >
       {/* 3D Model Canvas OR Static Fallback */}
       <div className="relative w-full h-full z-10 transition-transform duration-500 hover:scale-110 active:scale-95">
