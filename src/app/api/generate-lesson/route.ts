@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
-export const maxDuration = 60;
+export const maxDuration = 60; // Allow function to run up to 60 seconds
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();
@@ -41,7 +41,8 @@ export async function POST(req: Request) {
 ### CRITICAL INSTRUCTION:
 - Generate content in ${locale === 'ar' ? 'Arabic' : 'English'}.
 - JSON structure ({ title, content, quiz }) MUST be closed correctly.
-- Keep content concise to avoid token limits.`;
+- Keep content concise to avoid token limits.
+- Return ONLY the raw JSON object.`;
 
     const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -66,13 +67,22 @@ export async function POST(req: Request) {
     }
 
     const aiData = await openRouterResponse.json();
-    const output = aiData.choices[0]?.message?.content || '{}';
+    let rawText = aiData.choices[0]?.message?.content || '{}';
     
-    // Simple JSON repair
-    let cleanOutput = output.trim();
-    if (!cleanOutput.endsWith('}')) cleanOutput += '}';
+    // --- ROBUST JSON SANITIZATION ---
+    // 1. Strip markdown code block backticks and 'json' keyword
+    rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-    const parsedData = JSON.parse(cleanOutput);
+    // 2. Find the first '{' and the last '}' to extract only the valid JSON object
+    const firstBrace = rawText.indexOf('{');
+    const lastBrace = rawText.lastIndexOf('}');
+
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      rawText = rawText.substring(firstBrace, lastBrace + 1);
+    }
+    // --------------------------------
+
+    const parsedData = JSON.parse(rawText);
 
     // Save to Database
     const { data: lessonRecord, error: dbError } = await supabase
