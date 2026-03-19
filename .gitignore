@@ -61,5 +61,6 @@ supabase/.temp/
 
 # Planning & Prompt Files (Keep repo clean)
 skills.md
+skills2.md
 walkthrough.md
 implementation_plan.md
