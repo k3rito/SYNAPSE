@@ -95,7 +95,12 @@ const DynamicContentEngine = ({ content, isRtl }: Props) => {
               {children}
             </blockquote>
           ),
-          img: ({ src, alt }) => <ImageBlock src={src || ''} alt={alt} />
+          img: ({ src, alt }) => (
+            <ImageBlock 
+              src={typeof src === 'string' ? src : String(src || '')} 
+              alt={typeof alt === 'string' ? alt : String(alt || '')} 
+            />
+          )
         }}
       >
         {safeContent}
