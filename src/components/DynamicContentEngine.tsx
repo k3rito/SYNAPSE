@@ -68,8 +68,12 @@ const CodeBlock = memo(({ language, value }: { language: string; value: string }
 
 CodeBlock.displayName = 'CodeBlock';
 
-export function DynamicContentEngine({ content }: DynamicContentEngineProps) {
-  const isRtl = useLocale() === 'ar';
+  const safeContent = typeof content === 'string' 
+    ? content 
+    : typeof content === 'object' && content !== null
+      ? JSON.stringify(content)
+      : String(content || '');
+
   return (
     <div className={`space-y-8 animate-fade-in ${isRtl ? 'text-right' : 'text-left'}`} dir={isRtl ? 'rtl' : 'ltr'}>
       <ReactMarkdown

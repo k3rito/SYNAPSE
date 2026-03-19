@@ -179,11 +179,11 @@ export default function LessonPage() {
           </div>
           
           <div className="space-y-12">
-            {quizArray.length > 0 && quizArray.map((q: QuizItem, qIndex: number) => (
+            {(Array.isArray(quizArray) ? quizArray : []).map((q: QuizItem, qIndex: number) => (
               <div key={qIndex} className="space-y-6">
-                <p className="text-xl text-white font-inter font-medium leading-relaxed">{q.question}</p>
+                <p className="text-xl text-white font-inter font-medium leading-relaxed">{q?.question || 'Diagnostic query missing'}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {q.options.map((option: string, i: number) => {
+                  {(Array.isArray(q?.options) ? q.options : []).map((option: string, i: number) => {
                     const isSelected = selectedAnswers[qIndex] === option;
                     const isCorrect = option === q.correct_answer;
                     let btnStyle = "bg-white/5 border-white/10 text-mid-gray hover:bg-white/10 hover:border-white/20";
