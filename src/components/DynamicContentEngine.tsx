@@ -21,7 +21,7 @@ SyntaxHighlighter.registerLanguage('css', css);
 import { useLocale } from 'next-intl';
 
 interface DynamicContentEngineProps {
-  content: string;
+  content: any;
 }
 
 // Memoized CodeBlock for performance and memory safety
@@ -71,11 +71,14 @@ CodeBlock.displayName = 'CodeBlock';
 export function DynamicContentEngine({ content }: DynamicContentEngineProps) {
   const isRtl = useLocale() === 'ar';
   
-  const safeContent = Array.isArray(content) 
-    ? content.map(c => typeof c === 'string' ? c : JSON.stringify(c)).join('\n')
-    : typeof content === 'object' && content !== null
-      ? JSON.stringify(content, null, 2)
-      : String(content || '');
+  let safeContent = '';
+  if (Array.isArray(content)) {
+    safeContent = content.map(c => typeof c === 'string' ? c : JSON.stringify(c)).join('\n');
+  } else if (typeof content === 'object' && content !== null) {
+    safeContent = JSON.stringify(content, null, 2);
+  } else {
+    safeContent = String(content || '');
+  }
 
   return (
     <div className={`space-y-8 animate-fade-in ${isRtl ? 'text-right' : 'text-left'}`} dir={isRtl ? 'rtl' : 'ltr'}>
