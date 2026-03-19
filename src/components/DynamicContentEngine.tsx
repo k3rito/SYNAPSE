@@ -1,11 +1,12 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Terminal } from 'lucide-react';
+import { useLocale } from 'next-intl';
 
 // Register essential languages for performance
 import js from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
@@ -17,8 +18,6 @@ SyntaxHighlighter.registerLanguage('javascript', js);
 SyntaxHighlighter.registerLanguage('python', py);
 SyntaxHighlighter.registerLanguage('bash', bash);
 SyntaxHighlighter.registerLanguage('css', css);
-
-import { useLocale } from 'next-intl';
 
 interface DynamicContentEngineProps {
   content: any;
@@ -71,9 +70,10 @@ CodeBlock.displayName = 'CodeBlock';
 export function DynamicContentEngine({ content }: DynamicContentEngineProps) {
   const isRtl = useLocale() === 'ar';
   
+  // Robust AI-data sanitization logic
   let safeContent = '';
   if (Array.isArray(content)) {
-    safeContent = content.map(c => typeof c === 'string' ? c : JSON.stringify(c)).join('\n');
+    safeContent = content.map(c => (typeof c === 'string' ? c : JSON.stringify(c))).join('\n');
   } else if (typeof content === 'object' && content !== null) {
     safeContent = JSON.stringify(content, null, 2);
   } else {
@@ -148,46 +148,9 @@ export function DynamicContentEngine({ content }: DynamicContentEngineProps) {
 
           // Images - Intercepting Keyword placeholder
           img: ({ node, alt, src, ...props }) => {
-            const [error, setError] = React.useState(false);
-            const keyword = encodeURIComponent(String(src || 'tech-innovation'));
-            const imageUrl = `https://loremflickr.com/1200/675/${keyword}`;
-            
-            return (
-              <div className="w-full my-12 group">
-                <div className="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(34,211,238,0.15)] group-hover:shadow-[0_0_50px_rgba(34,211,238,0.3)] transition-all duration-700 animate-float">
-                  {!error ? (
-                    <>
-                      <img
-                        src={imageUrl}
-                        alt={alt || 'Technical Visual'}
-                        className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
-                        onError={() => setError(true)}
-                        {...props}
-                      />
-                      {/* SYNAPSE Cyan Tint Overlay */}
-                      <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay pointer-events-none" />
-                    </>
-                  ) : (
-                    /* Fallback SYNAPSE Placeholder */
-                    <div className="w-full h-full bg-[#0A0A0A] flex flex-col items-center justify-center gap-4">
-                      <div className="w-20 h-20 rounded-2xl border border-brand-cyan/30 bg-brand-cyan/10 flex items-center justify-center animate-pulse">
-                        <Terminal className="w-10 h-10 text-brand-cyan" />
-                      </div>
-                      <span className="text-xs font-space text-brand-cyan/50 uppercase tracking-[0.3em]">
-                        Synapse Visual Error: {alt}
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-deep-black/80 via-transparent to-transparent opacity-60" />
-                  <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse shadow-[0_0_100px_#22D3EE]" />
-                    <p className="text-[10px] font-space tracking-[0.2em] uppercase text-white/70">
-                      Symmetrization Active: {alt}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
+            // Using useState inside components prop is sometimes finicky depending on version
+            // But we'll keep it as the previous working version was okay
+            return <ImageBlock alt={alt} src={src} {...props} />;
           },
 
           // Lists
@@ -205,3 +168,47 @@ export function DynamicContentEngine({ content }: DynamicContentEngineProps) {
     </div>
   );
 }
+
+// Sub-component for Image to keep DynamicContentEngine clean
+const ImageBlock = ({ alt, src, ...props }: any) => {
+  const [error, setError] = useState(false);
+  const keyword = encodeURIComponent(String(src || 'tech-innovation'));
+  const imageUrl = `https://loremflickr.com/1200/675/${keyword}`;
+
+  return (
+    <div className="w-full my-12 group">
+      <div className="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(34,211,238,0.15)] group-hover:shadow-[0_0_50px_rgba(34,211,238,0.3)] transition-all duration-700 animate-float">
+        {!error ? (
+          <>
+            <img
+              src={imageUrl}
+              alt={alt || 'Technical Visual'}
+              className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
+              onError={() => setError(true)}
+              {...props}
+            />
+            {/* SYNAPSE Cyan Tint Overlay */}
+            <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay pointer-events-none" />
+          </>
+        ) : (
+          /* Fallback SYNAPSE Placeholder */
+          <div className="w-full h-full bg-[#0A0A0A] flex flex-col items-center justify-center gap-4">
+            <div className="w-20 h-20 rounded-2xl border border-brand-cyan/30 bg-brand-cyan/10 flex items-center justify-center animate-pulse">
+              <Terminal className="w-10 h-10 text-brand-cyan" />
+            </div>
+            <span className="text-xs font-space text-brand-cyan/50 uppercase tracking-[0.3em]">
+              Synapse Visual Error: {alt}
+            </span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-deep-black/80 via-transparent to-transparent opacity-60" />
+        <div className="absolute bottom-6 left-6 flex items-center gap-3">
+          <div className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse shadow-[0_0_100px_#22D3EE]" />
+          <p className="text-[10px] font-space tracking-[0.2em] uppercase text-white/70">
+            Symmetrization Active: {alt}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
