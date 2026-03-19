@@ -8,7 +8,7 @@ import { CheckCircle2, ChevronRight, Play, Server, Terminal, Loader2, ArrowLeft 
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/utils/supabase/client';
 import { curriculumData, DifficultyLevel } from '@/utils/curriculumData';
-import { DynamicContentEngine } from '@/components/DynamicContentEngine';
+import DynamicContentEngine from '@/components/DynamicContentEngine';
 import { LessonSkeleton } from '@/components/LessonSkeleton';
 import { useTranslations } from 'next-intl';
 
