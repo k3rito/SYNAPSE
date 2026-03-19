@@ -141,23 +141,7 @@ export default function LessonPage() {
 
   console.log("Raw Lesson Data:", lessonData);
 
-  // Deep Array Extraction for the quiz
-  let extractedQuiz: any[] = [];
-  const rawQuiz = lessonData?.quiz;
-  
-  if (Array.isArray(rawQuiz)) {
-    extractedQuiz = rawQuiz;
-  } else if (rawQuiz && typeof rawQuiz === 'object') {
-    if (Array.isArray((rawQuiz as any).questions)) {
-      extractedQuiz = (rawQuiz as any).questions;
-    } else if (Array.isArray((rawQuiz as any).items)) {
-      extractedQuiz = (rawQuiz as any).items;
-    } else {
-      // Extract object values, filtering out non-objects to find potential question items
-      extractedQuiz = Object.values(rawQuiz).filter(v => typeof v === 'object' && v !== null);
-    }
-  }
-  const quizArray = extractedQuiz.flat();
+  const quizArray = Array.isArray(lessonData?.quiz) ? lessonData.quiz : [];
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl animate-fade-in pb-32">
@@ -192,15 +176,15 @@ export default function LessonPage() {
           </div>
           
           <div className="space-y-12">
-            {(Array.isArray(quizArray) ? quizArray : []).map((q: any, qIndex: number) => {
-              const questionText = q?.question || q?.q || q?.title || q?.text || 'Diagnostic query missing';
+            {quizArray.map((q: any, qIndex: number) => {
+              const questionText = q?.question || 'Diagnostic query missing';
               return (
                 <div key={qIndex} className="space-y-6">
                   <p className="text-xl text-white font-inter font-medium leading-relaxed">{questionText}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {(() => {
-                    const options = Array.isArray(q?.options) ? q.options : Array.isArray(q?.choices) ? q.choices : Array.isArray(q?.answers) ? q.answers : [];
-                    const correctAnswer = q?.correct_answer || q?.correct || q?.answer || '';
+                    const options = Array.isArray(q?.options) ? q.options : [];
+                    const correctAnswer = q?.correct_answer || '';
                     return options.map((option: string, i: number) => {
                       const isSelected = selectedAnswers[qIndex] === option;
                       const isCorrect = option === correctAnswer;
