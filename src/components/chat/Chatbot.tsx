@@ -3,7 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, X, Terminal, LogIn } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
-import { ChatbotOrb } from '@/components/ui/ChatbotOrb';
+import dynamic from 'next/dynamic';
+const ChatbotOrb = dynamic(() => import('@/components/ui/ChatbotOrb').then(mod => mod.ChatbotOrb), { ssr: false });
+
 import { GlassCard } from '@/components/ui/GlassCard';
 import gsap from 'gsap';
 import { useTranslations } from 'next-intl';

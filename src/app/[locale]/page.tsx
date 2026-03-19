@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Canvas } from '@react-three/fiber';
 import { WebGLErrorBoundary } from '@/components/home/ErrorBoundary';
-import { IntroAnimation } from '@/components/home/IntroAnimation';
-import { NeuralNetwork3D } from '@/components/home/NeuralNetwork3D';
+import dynamic from 'next/dynamic';
+const IntroAnimation = dynamic(() => import('@/components/home/IntroAnimation').then(mod => mod.IntroAnimation), { ssr: false });
+const NeuralNetwork3D = dynamic(() => import('@/components/home/NeuralNetwork3D').then(mod => mod.NeuralNetwork3D), { ssr: false });
+
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ArrowRight, Brain, Code, Terminal, Zap } from 'lucide-react';
 import { useWebGLSupport } from '@/hooks/useWebGLSupport';

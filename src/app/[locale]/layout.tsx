@@ -36,7 +36,9 @@ import { LoadingProvider } from '@/components/ui/LoadingProgress';
 import { GamificationOverlay } from '@/components/ui/GamificationOverlay';
 import { AuthStateListener } from '@/components/auth/AuthStateListener';
 import { CookieConsent } from '@/components/layout/CookieConsent';
-import { CinematicBackground } from '@/components/layout/CinematicBackground';
+import dynamic from 'next/dynamic';
+const CinematicBackground = dynamic(() => import('@/components/layout/CinematicBackground').then(mod => mod.CinematicBackground), { ssr: false });
+
 
 export default async function RootLayout({
   children,

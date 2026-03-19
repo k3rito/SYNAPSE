@@ -102,8 +102,11 @@ export const ChatbotOrb = () => {
               <pointLight position={[-5, -5, -5]} intensity={1} color="#22D3EE" />
               
               <Suspense fallback={null}>
-                <ChatbotModel isHighPerf={isHighPerf} />
+                <WebGLErrorBoundary>
+                  <ChatbotModel isHighPerf={isHighPerf} />
+                </WebGLErrorBoundary>
               </Suspense>
+
             </Canvas>
           </WebGLErrorBoundary>
         )}
