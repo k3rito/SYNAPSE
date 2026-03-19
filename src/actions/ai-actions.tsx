@@ -1,3 +1,4 @@
+// @ts-expect-error - Vercel AI SDK RSC types resolution fallback
 import { createAI, getMutableAIState, render } from 'ai/rsc';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
@@ -10,7 +11,7 @@ const SynapseTerminal = ({ command, output }: { command: string, output: string 
       <div className="w-2 h-2 rounded-full bg-brand-cyan" />
       <span>PROMPT_INJECTION_ACTIVE</span>
     </div>
-    <div className="text-brand-cyan mb-1">> {command}</div>
+    <div className="text-brand-cyan mb-1">&gt; {command}</div>
     <div className="text-white opacity-80">{output}</div>
   </div>
 );
@@ -42,7 +43,7 @@ async function submitUserMessage(content: string) {
           command: z.string(),
           output: z.string(),
         }),
-        render: async function* ({ command, output }) {
+        render: async function* ({ command, output }: { command: string, output: string }) {
           yield <div className="animate-pulse text-brand-cyan">Accessing Synapse...</div>;
           return <SynapseTerminal command={command} output={output} />;
         },
