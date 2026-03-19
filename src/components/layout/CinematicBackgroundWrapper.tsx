@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from 'next/dynamic';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 const CinematicBackground = dynamic(
   () => import('@/components/layout/CinematicBackground'),
@@ -8,5 +9,9 @@ const CinematicBackground = dynamic(
 );
 
 export default function CinematicBackgroundWrapper() {
-  return <CinematicBackground />;
+  return (
+    <ErrorBoundary>
+      <CinematicBackground />
+    </ErrorBoundary>
+  );
 }

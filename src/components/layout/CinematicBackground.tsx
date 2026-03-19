@@ -32,14 +32,8 @@ const CinematicModel = () => {
 
 // Separate component for GLB loading to catch its suspension and errors
 const GLBModel = ({ path }: { path: string }) => {
-  try {
-    const { scene } = useGLTF(path);
-    return <primitive object={scene} />;
-  } catch (e) {
-    // If useGLTF fails (404), this will be caught by the ErrorBoundary, 
-    // but we can also return the procedural Scene as a direct fallback
-    return <Scene />;
-  }
+  const { scene } = useGLTF(path);
+  return <primitive object={scene} />;
 };
 
 
