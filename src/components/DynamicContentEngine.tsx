@@ -1,214 +1,107 @@
 'use client';
 
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import 'katex/dist/katex.min.css';
 import { Terminal } from 'lucide-react';
-import { useLocale } from 'next-intl';
 
-// Register essential languages for performance
-import js from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
-import py from 'react-syntax-highlighter/dist/esm/languages/prism/python';
-import bash from 'react-syntax-highlighter/dist/esm/languages/prism/bash';
-import css from 'react-syntax-highlighter/dist/esm/languages/prism/css';
-
-SyntaxHighlighter.registerLanguage('javascript', js);
-SyntaxHighlighter.registerLanguage('python', py);
-SyntaxHighlighter.registerLanguage('bash', bash);
-SyntaxHighlighter.registerLanguage('css', css);
-
-interface DynamicContentEngineProps {
+interface Props {
   content: any;
+  isRtl?: boolean;
 }
 
-// Memoized CodeBlock for performance and memory safety
-const CodeBlock = memo(({ language, value }: { language: string; value: string }) => {
-  const isRtl = useLocale() === 'ar';
-  return (
-    <div className={`my-8 rounded-xl overflow-hidden border border-white/10 bg-[#0A0A0A] group/code relative shadow-2xl ${isRtl ? 'text-right' : 'text-left'}`}>
-      {/* Neural Terminal: Minimalist UI */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[#111] border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-            <div className="w-2.5 h-2.5 rounded-full bg-white/5" />
-            <div className="w-2.5 h-2.5 rounded-full bg-white/5" />
-          </div>
-          <div className="flex items-center gap-2 ml-2">
-            <Terminal className="w-3.5 h-3.5 text-brand-cyan/70" />
-            <span className="text-[9px] font-space text-mid-gray uppercase tracking-[0.2em]">
-              {language || 'code'} // Neural Terminal
-            </span>
-          </div>
-        </div>
-      </div>
-      
-      <SyntaxHighlighter
-        language={language || 'text'}
-        style={vscDarkPlus}
-        customStyle={{
-          margin: 0,
-          padding: '1.25rem',
-          background: 'transparent',
-          fontSize: '0.85rem',
-          lineHeight: '1.7',
-          whiteSpace: 'pre-wrap',
-          wordBreak: 'break-word',
-        }}
-        useInlineStyles={true}
-      >
-        {value}
-      </SyntaxHighlighter>
-    </div>
-  );
-});
+const ImageBlock = ({ src, alt }: { src: string; alt?: string }) => (
+  <div className="my-8 rounded-2xl overflow-hidden border border-brand-cyan/20 shadow-2xl group">
+    <img 
+      src={src} 
+      alt={alt || 'Lesson visual'} 
+      className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105 shadow-inner"
+    />
+  </div>
+);
 
-CodeBlock.displayName = 'CodeBlock';
-
-export function DynamicContentEngine({ content }: DynamicContentEngineProps) {
-  const isRtl = useLocale() === 'ar';
-  
-  // Robust AI-data sanitization logic
+const DynamicContentEngine = ({ content, isRtl }: Props) => {
   let safeContent = '';
-  if (Array.isArray(content)) {
-    safeContent = content.map(c => (typeof c === 'string' ? c : JSON.stringify(c))).join('\n');
+  
+  if (typeof content === 'string') {
+    safeContent = content;
+  } else if (Array.isArray(content)) {
+    safeContent = content.map(c => typeof c === 'string' ? c : JSON.stringify(c)).join('\n\n');
   } else if (typeof content === 'object' && content !== null) {
-    safeContent = JSON.stringify(content, null, 2);
-  } else {
-    safeContent = String(content || '');
+    safeContent = content.content || JSON.stringify(content, null, 2);
   }
 
   return (
-    <div className={`space-y-8 animate-fade-in ${isRtl ? 'text-right' : 'text-left'}`} dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className={`space-y-6 text-light-gray leading-relaxed ${isRtl ? 'font-inter rtl text-right' : 'font-inter'}`}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
         components={{
-          // Header 2 - Major Sections
-          h2: ({ node, ...props }) => (
-            <h2 
-              className="text-2xl md:text-3xl font-sora font-bold text-white border-b border-brand-cyan/30 pb-3 mt-12 mb-6 scroll-mt-24"
-              {...props} 
-            />
+          h1: ({ children }) => <h1 className="text-3xl font-sora font-bold text-white mb-6 border-b border-brand-cyan/20 pb-4">{children}</h1>,
+          h2: ({ children }) => <h2 className="text-2xl font-sora font-semibold text-brand-cyan mt-12 mb-4">{children}</h2>,
+          h3: ({ children }) => <h3 className="text-xl font-sora font-medium text-white/90 mt-8 mb-3">{children}</h3>,
+          p: ({ children }) => <p className="mb-6 opacity-90 leading-loose">{children}</p>,
+          ul: ({ children }) => <ul className="list-none space-y-3 mb-8 pl-4">{children}</ul>,
+          li: ({ children }) => (
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-cyan shrink-0 glow-accent" />
+              <span>{children}</span>
+            </li>
           ),
-          
-          // Header 3 - Subsections
-          h3: ({ node, ...props }) => (
-            <h3 
-              className="text-xl font-sora font-semibold text-brand-cyan mt-8 mb-4 hover:glow-text transition-all duration-300"
-              {...props} 
-            />
+          table: ({ children }) => (
+            <div className="my-8 overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm">
+              <table className="w-full text-sm border-collapse">{children}</table>
+            </div>
           ),
-
-          // Paragraphs
-          p: ({ node, ...props }) => (
-            <p 
-              className="text-lg text-gray-300 leading-relaxed mb-6 font-inter"
-              {...props} 
-            />
-          ),
-
-          // Bold Text
-          strong: ({ node, ...props }) => (
-            <strong className="text-white font-semibold glow-text-sm" {...props} />
-          ),
-
-          // Inline & Block Code
-          code: ({ node, inline, className, children, ...props }: any) => {
+          thead: ({ children }) => <thead className="bg-brand-cyan/10 text-brand-cyan border-b border-brand-cyan/20">{children}</thead>,
+          th: ({ children }) => <th className="px-6 py-4 text-left font-space tracking-wider uppercase text-xs">{children}</th>,
+          td: ({ children }) => <td className="px-6 py-4 border-b border-white/5 opacity-80">{children}</td>,
+          code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
-            const value = String(children).replace(/\n$/, '');
-            
-            if (!inline && match) {
-              return <CodeBlock language={match[1]} value={value} />;
-            }
-
-            return (
-              <code 
-                className="bg-brand-cyan/15 text-brand-cyan px-1.5 py-0.5 rounded text-[0.9em] font-mono border border-brand-cyan/20 animate-pulse-slow mx-0.5"
-                {...props}
-              >
+            return !inline && match ? (
+              <div className="relative my-8 rounded-xl overflow-hidden border border-white/10 group">
+                <div className="flex items-center justify-between px-4 py-2 bg-deep-black/80 border-b border-white/5">
+                  <div className="flex items-center gap-2 text-[10px] text-mid-gray font-space uppercase tracking-widest">
+                    <Terminal className="w-3 h-3 text-brand-cyan" /> {match[1]}
+                  </div>
+                  <div className="flex gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-white/10" />
+                    <div className="w-2 h-2 rounded-full bg-white/10" />
+                  </div>
+                </div>
+                <SyntaxHighlighter
+                  style={vscDarkPlus}
+                  language={match[1]}
+                  PreTag="div"
+                  className="!m-0 !bg-deep-black/60"
+                  {...props}
+                >
+                  {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+              </div>
+            ) : (
+              <code className="bg-brand-cyan/20 text-brand-cyan px-1.5 py-0.5 rounded font-mono text-sm" {...props}>
                 {children}
               </code>
             );
           },
-
-          // Tables
-          table: ({ node, ...props }) => (
-            <div className="my-8 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm">
-              <table className="w-full text-left border-collapse" {...props} />
-            </div>
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-4 border-brand-cyan bg-brand-cyan/5 px-8 py-6 my-8 rounded-r-2xl italic opacity-90">
+              {children}
+            </blockquote>
           ),
-          th: ({ node, ...props }) => (
-            <th className="bg-white/10 text-brand-cyan font-sora p-4 border-b border-white/10 uppercase tracking-tighter" {...props} />
-          ),
-          td: ({ node, ...props }) => (
-            <td className="p-4 border-b border-white/10 text-gray-300 font-inter text-sm" {...props} />
-          ),
-
-          // Images - Intercepting Keyword placeholder
-          img: ({ node, alt, src, ...props }) => {
-            // Using useState inside components prop is sometimes finicky depending on version
-            // But we'll keep it as the previous working version was okay
-            return <ImageBlock alt={alt} src={src} {...props} />;
-          },
-
-          // Lists
-          ul: ({ node, ...props }) => <ul className="list-none space-y-4 my-6 pl-4" {...props} />,
-          li: ({ node, children, ...props }: any) => (
-            <li className="flex gap-3 text-gray-300 font-inter" {...props}>
-              <span className="text-brand-cyan mt-1.5 shrink-0">●</span>
-              <span>{children}</span>
-            </li>
-          ),
+          img: ({ src, alt }) => <ImageBlock src={src || ''} alt={alt} />
         }}
       >
         {safeContent}
       </ReactMarkdown>
     </div>
   );
-}
-
-// Sub-component for Image to keep DynamicContentEngine clean
-const ImageBlock = ({ alt, src, ...props }: any) => {
-  const [error, setError] = useState(false);
-  const keyword = encodeURIComponent(String(src || 'tech-innovation'));
-  const imageUrl = `https://loremflickr.com/1200/675/${keyword}`;
-
-  return (
-    <div className="w-full my-12 group">
-      <div className="relative w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(34,211,238,0.15)] group-hover:shadow-[0_0_50px_rgba(34,211,238,0.3)] transition-all duration-700 animate-float">
-        {!error ? (
-          <>
-            <img
-              src={imageUrl}
-              alt={alt || 'Technical Visual'}
-              className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
-              onError={() => setError(true)}
-              {...props}
-            />
-            {/* SYNAPSE Cyan Tint Overlay */}
-            <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay pointer-events-none" />
-          </>
-        ) : (
-          /* Fallback SYNAPSE Placeholder */
-          <div className="w-full h-full bg-[#0A0A0A] flex flex-col items-center justify-center gap-4">
-            <div className="w-20 h-20 rounded-2xl border border-brand-cyan/30 bg-brand-cyan/10 flex items-center justify-center animate-pulse">
-              <Terminal className="w-10 h-10 text-brand-cyan" />
-            </div>
-            <span className="text-xs font-space text-brand-cyan/50 uppercase tracking-[0.3em]">
-              Synapse Visual Error: {alt}
-            </span>
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-deep-black/80 via-transparent to-transparent opacity-60" />
-        <div className="absolute bottom-6 left-6 flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse shadow-[0_0_100px_#22D3EE]" />
-          <p className="text-[10px] font-space tracking-[0.2em] uppercase text-white/70">
-            Symmetrization Active: {alt}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 };
+
+export default memo(DynamicContentEngine);

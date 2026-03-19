@@ -7,9 +7,8 @@ import { Network, Search, Menu, X, Terminal, Languages } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { createClient } from '@/utils/supabase/client';
 import { SearchModal } from '../ui/SearchModal';
-
+import { ProfileDropdown } from '../profile/ProfileDropdown';
 import { useGamificationStore } from '@/store/useGamificationStore';
-import { LogOut, LayoutDashboard, BrainCircuit, User } from 'lucide-react';
 
 export const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,16 +16,15 @@ export const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<any>(null);
+  
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations('Navigation');
   const locale = useLocale();
   const toggleChatbot = useAppStore((state) => state.toggleChatbot);
-  const clearChatHistory = useAppStore((state) => state.clearChatHistory);
   const supabase = createClient();
 
-  // Gamification Store
-  const { level, xp, progressPercentage, fetchUserData, resetStore, rank } = useGamificationStore();
+  const { level, progressPercentage, fetchUserData, rank } = useGamificationStore();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -59,21 +57,13 @@ export const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [supabase, fetchUserData]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    resetStore();
-    clearChatHistory();
-    router.push('/login');
-    router.refresh();
-  };
-
   const navLinks = [
-    { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
-    { name: t('startLearning'), href: '/curriculum', icon: BrainCircuit },
+    { name: t('dashboard'), href: '/dashboard' },
+    { name: t('startLearning'), href: '/curriculum' },
   ];
 
   if (isAdmin) {
-    navLinks.push({ name: t('admin'), href: '/admin', icon: Terminal });
+    navLinks.push({ name: t('admin'), href: '/admin' });
   }
 
   const toggleLanguage = () => {
@@ -136,26 +126,20 @@ export const Navigation = () => {
           <Languages className="w-3 h-3" />
           <span>{locale === 'en' ? 'العربية' : 'English'}</span>
         </button>
+        
         {user ? (
           <div className="flex items-center gap-2 pl-4 border-l border-white/10">
-             <button 
+            <button 
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 text-mid-gray hover:text-white transition-colors"
+              className="p-2 text-mid-gray hover:text-white transition-colors mr-2"
             >
               <Search className="w-5 h-5" />
             </button>
-            <button 
-              onClick={handleLogout}
-              className="p-2 text-mid-gray hover:text-red-400 transition-colors group relative"
-              title="Terminate Session"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-deep-black/90 border border-white/10 rounded text-[10px] uppercase font-space tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">Disconnect</span>
-            </button>
+            <ProfileDropdown user={user} />
           </div>
         ) : (
-          <Link href="/login" className="text-xs font-space uppercase tracking-widest text-brand-cyan hover:text-white transition-colors">
-            Authorize
+          <Link href="/login" className="px-6 py-2 bg-brand-cyan text-deep-black rounded-full text-[10px] font-space font-bold uppercase tracking-widest hover:bg-white transition-all">
+            Authorize Node
           </Link>
         )}
       </div>
@@ -170,21 +154,21 @@ export const Navigation = () => {
 
       {/* Mobile Dropdown */}
       {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 p-4 glass-card md:hidden flex flex-col gap-4">
+        <div className="absolute top-full left-0 right-0 mt-2 p-4 glass-card md:hidden flex flex-col gap-4 mx-4">
           {navLinks.map((link) => (
             <Link 
               key={link.name} 
               href={link.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="px-4 py-2 hover:bg-white/5 rounded-lg font-space"
+              className="px-4 py-2 hover:bg-white/5 rounded-lg font-space text-sm uppercase tracking-wider"
             >
               {link.name}
             </Link>
           ))}
-          <div className="h-px bg-white/10 my-1" />
+          <div className="h-px bg-white/10 my-1 font-space uppercase" />
           <button 
             onClick={toggleLanguage}
-            className="flex items-center gap-2 px-4 py-2 text-mid-gray hover:text-white font-space"
+            className="flex items-center gap-2 px-4 py-2 text-mid-gray hover:text-white font-space text-sm uppercase tracking-wider"
           >
             <Languages className="w-4 h-4" />
             <span>{locale === 'en' ? 'العربية' : 'English'}</span>
@@ -194,11 +178,21 @@ export const Navigation = () => {
               toggleChatbot();
               setIsMobileMenuOpen(false);
             }}
-            className="flex items-center gap-2 px-4 py-2 text-brand-cyan hover:bg-brand-cyan/10 rounded-lg font-space"
+            className="flex items-center gap-2 px-4 py-2 text-brand-cyan hover:bg-brand-cyan/10 rounded-lg font-space text-sm uppercase tracking-wider"
           >
             <Terminal className="w-4 h-4" />
             <span>{t('askAi')}</span>
           </button>
+          
+          {!user && (
+            <Link 
+              href="/login" 
+              className="mt-2 w-full py-4 bg-brand-cyan text-deep-black text-center rounded-xl font-sora font-bold text-sm"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Authorize Node
+            </Link>
+          )}
         </div>
       )}
 

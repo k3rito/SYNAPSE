@@ -1,6 +1,14 @@
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
+import { generateText } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
+
+// Initialize OpenRouter as an OpenAI-compatible provider
+const openrouter = createOpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();
@@ -9,12 +17,8 @@ export async function POST(req: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          // Ignored in Route Handlers since middleware handles the refresh
-        },
+        getAll() { return cookieStore.getAll(); },
+        setAll(cookiesToSet) { },
       },
     }
   );
@@ -22,7 +26,6 @@ export async function POST(req: Request) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {
-    console.error("CHAT ERROR: No user session found", authError);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -33,45 +36,32 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    const systemPrompt = `You are SYNAPSE AI, a senior technical instructor in {${locale}} mode.
-Format: technical, concise, defensive mindset.`;
+    const systemPrompt = `You are SYNAPSE AI, a senior technical instructor.
+Format: technical, concise, defensive mindset.
+Language: ${locale === 'ar' ? 'Arabic' : 'English'}.`;
 
-    const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Context: ${JSON.stringify(lessonContext)}\nQuestion: ${message}` }
-        ]
-      }),
+    const { text } = await generateText({
+      model: openrouter('google/gemini-2.0-flash-001'),
+      system: systemPrompt,
+      prompt: `Context: ${JSON.stringify(lessonContext || {})}\nQuestion: ${message}`,
     });
 
-    if (!openRouterResponse.ok) throw new Error("AI API Error");
-
-    const data = await openRouterResponse.json();
-    const output = data.choices[0]?.message?.content || 'Error processing request.';
-
-    // Save to History
+    // Save to History with user-isolation
     if (lessonContext?.id) {
       await supabase.from('chat_history').insert({
         user_id: user.id,
         lesson_id: lessonContext.id,
         role: 'assistant',
-        content: output
+        content: text
       });
     }
 
-    return NextResponse.json({ reply: output });
+    return NextResponse.json({ reply: text });
 
-  } catch (error) {
-    console.error('CHAT API ERROR:', error);
+  } catch (error: any) {
+    console.error('SYNAPSE CHAT VERCEL SDK ERROR:', error);
     return NextResponse.json(
-      { error: 'Service temporarily unavailable' },
+      { error: 'Service temporarily unavailable', details: error.message },
       { status: 500 }
     );
   }

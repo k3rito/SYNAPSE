@@ -35,6 +35,8 @@ export const metadata: Metadata = {
 import { LoadingProvider } from '@/components/ui/LoadingProgress';
 import { GamificationOverlay } from '@/components/ui/GamificationOverlay';
 import { AuthStateListener } from '@/components/auth/AuthStateListener';
+import { CookieConsent } from '@/components/layout/CookieConsent';
+import { CinematicBackground } from '@/components/layout/CinematicBackground';
 
 export default async function RootLayout({
   children,
@@ -56,13 +58,16 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning={true}>
       <body
-        className={`${sora.variable} ${spaceGrotesk.variable} ${inter.variable} antialiased ${locale === 'ar' ? 'font-sora' : 'font-inter'}`}
+        className={`${sora.variable} ${spaceGrotesk.variable} ${inter.variable} antialiased ${locale === 'ar' ? 'font-sora' : 'font-inter'} bg-deep-black`}
       >
         <NextIntlClientProvider messages={messages} locale={locale}>
           <LoadingProvider>
+            {/* Cinematic Background Layer */}
+            <CinematicBackground />
+
             <AuthStateListener />
             <Navigation />
-            <main className="pt-20">
+            <main className="relative z-10 pt-20">
               {children}
             </main>
             {/* Global AI Assistant */}
@@ -70,6 +75,9 @@ export default async function RootLayout({
             
             {/* Global Gamification UI */}
             <GamificationOverlay />
+
+            {/* Global Cookie Consent */}
+            <CookieConsent />
           </LoadingProvider>
         </NextIntlClientProvider>
       </body>

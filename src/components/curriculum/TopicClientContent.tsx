@@ -1,9 +1,7 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from '@/navigation';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { ArrowLeft, Play, CheckCircle2, Lock, Loader2, Award } from 'lucide-react';
+import { ArrowLeft, Play, CheckCircle2, Lock, Loader2, Award, LogIn, AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { createClient } from '@/utils/supabase/client';
 import { curriculumData, DifficultyLevel } from '@/utils/curriculumData';
@@ -22,6 +20,8 @@ export function TopicClientContent({ locale, trackSlug, difficulty, topicSlug }:
   const [completedNodes, setCompletedNodes] = useState<string[]>([]);
   const [generatingNodeId, setGeneratingNodeId] = useState<string | null>(null);
   const [showNeuralHandshake, setShowNeuralHandshake] = useState(false);
+  const [showLoginWarning, setShowLoginWarning] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
   const t = useTranslations('Curriculum');
@@ -33,7 +33,6 @@ export function TopicClientContent({ locale, trackSlug, difficulty, topicSlug }:
 
   const topicData = trackData?.topics.find(t => t.id.toLowerCase() === topicSlug.toLowerCase());
   
-  // Find matching difficulty case-insensitively
   const difficultyKey = Object.keys(topicData?.difficulties || {}).find(
     d => d.toLowerCase() === difficulty.toLowerCase()
   ) as DifficultyLevel | undefined;
@@ -43,6 +42,8 @@ export function TopicClientContent({ locale, trackSlug, difficulty, topicSlug }:
   useEffect(() => {
     const fetchUserProgress = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      
       if (!user) {
         setLoading(false);
         return;
@@ -77,34 +78,34 @@ export function TopicClientContent({ locale, trackSlug, difficulty, topicSlug }:
 
   const handleNodeClick = async (nodeTitle: string) => {
     if (generatingNodeId) return;
+
+    // SKILL 4: Auth Gatekeeping
+    if (!user) {
+      setShowLoginWarning(true);
+      return;
+    }
+
     setGeneratingNodeId(nodeTitle);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: existingLesson } = await supabase
-          .from('generated_lessons')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('topic', nodeTitle)
-          .single();
+      const { data: existingLesson } = await supabase
+        .from('generated_lessons')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('topic', nodeTitle)
+        .single();
 
-        if (existingLesson?.id) {
-          router.push(`/lesson/${existingLesson.id}`);
-          return;
-        }
+      if (existingLesson?.id) {
+        router.push(`/lesson/${existingLesson.id}`);
+        return;
       }
 
-      // Phase 1: Neural Handshake (Local UI Simulation)
       setShowNeuralHandshake(true);
-      
-      // Delay the actual API call to simulate handshake/latency
       const handshakeDelay = new Promise(resolve => setTimeout(resolve, 2000));
 
       const apiCall = fetch('/api/generate-lesson', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ 
           topic: nodeTitle, 
           context: `Track: ${trackData?.title || 'Unknown'}, Topic: ${topicData?.title || 'Unknown'}, Difficulty: ${difficulty}`,
@@ -112,10 +113,9 @@ export function TopicClientContent({ locale, trackSlug, difficulty, topicSlug }:
         }),
       });
 
-      // Wait for both handshake and API (or at least handshake)
       const [response] = await Promise.all([apiCall, handshakeDelay]);
-      
       const data = await response.json();
+      
       if (data.lessonId) {
         router.push(`/lesson/${data.lessonId}`);
       }
@@ -146,7 +146,6 @@ export function TopicClientContent({ locale, trackSlug, difficulty, topicSlug }:
       </header>
 
       <div className="relative pl-4 md:pl-8 space-y-12 before:absolute before:inset-0 before:ml-[31px] md:before:ml-[47px] before:-translate-x-px md:before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-brand-cyan before:to-transparent before:opacity-30">
-        
         {loading ? (
           <div className="flex items-center gap-4 text-brand-cyan pl-12 py-8">
             <Loader2 className="w-6 h-6 animate-spin" />
@@ -218,7 +217,36 @@ export function TopicClientContent({ locale, trackSlug, difficulty, topicSlug }:
         )}
       </div>
 
-      {/* Neural Handshake Overlay (Ghost Mode) */}
+      {/* SKILL 4: Login Warning UI */}
+      {showLoginWarning && (
+        <div className="fixed inset-0 z-[110] backdrop-blur-xl bg-deep-black/60 flex items-center justify-center p-4">
+          <GlassCard className="max-w-md w-full p-8 text-center border-brand-cyan/30 shadow-[0_0_50px_rgba(34,211,238,0.1)]">
+            <div className="w-16 h-16 bg-brand-cyan/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-8 h-8 text-brand-cyan" />
+            </div>
+            <h2 className="text-2xl font-sora font-bold mb-4">Authentication Required</h2>
+            <p className="text-mid-gray mb-8 leading-relaxed">
+              الرجاء تسجيل الدخول لتتمكن من إنشاء دروس مخصصة باستخدام الذكاء الاصطناعي والاستفادة من نظام التقدم في SYNAPSE.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => router.push('/login')}
+                className="w-full py-4 bg-brand-cyan text-deep-black rounded-xl font-sora font-bold hover:bg-white transition-all flex items-center justify-center gap-2"
+              >
+                <LogIn className="w-5 h-5" /> Go to Login
+              </button>
+              <button 
+                onClick={() => setShowLoginWarning(false)}
+                className="w-full py-3 text-mid-gray hover:text-white font-space text-[10px] tracking-widest uppercase"
+              >
+                Cancel
+              </button>
+            </div>
+          </GlassCard>
+        </div>
+      )}
+
+      {/* Neural Handshake Overlay */}
       {showNeuralHandshake && (
         <div className="fixed inset-0 z-[100] bg-transparent flex flex-col items-center justify-center text-center animate-fade-in">
           <div className="relative p-12 rounded-3xl backdrop-blur-md bg-white/5 border border-white/10 shadow-[0_0_50px_rgba(34,211,238,0.15)] flex flex-col items-center">

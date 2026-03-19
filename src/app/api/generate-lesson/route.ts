@@ -1,8 +1,30 @@
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
+import { generateObject } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
+import { z } from 'zod';
 
-export const maxDuration = 60; // Allow function to run up to 60 seconds
+export const maxDuration = 60;
+
+// Initialize OpenRouter as an OpenAI-compatible provider
+const openrouter = createOpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+// Define the strict Zod schema for Synapse Lessons
+const lessonSchema = z.object({
+  title: z.string().describe('The title of the lesson'),
+  content: z.string().describe('The full markdown content of the lesson'),
+  topic: z.string().optional().describe('The main topic'),
+  quiz: z.array(z.object({
+    question: z.string().describe('The diagnostic question'),
+    options: z.array(z.string()).describe('Four possible answers'),
+    correct_answer: z.string().describe('The matching correct option'),
+    explanation: z.string().optional().describe('Brief technical explanation')
+  })).describe('A set of 4-5 diagnostic questions')
+});
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();
@@ -11,12 +33,8 @@ export async function POST(req: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          // Ignored in Route Handlers since middleware handles the refresh
-        },
+        getAll() { return cookieStore.getAll(); },
+        setAll(cookiesToSet) { },
       },
     }
   );
@@ -24,67 +42,31 @@ export async function POST(req: Request) {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
   if (authError || !user) {
-    console.error("GENERATE LESSON ERROR: No user session found", authError);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const { topic, context, locale = 'en' } = await req.json();
 
-    const systemPrompt = `You are a senior academic instructor for Synapse AI. Your sole purpose is to generate detailed technical lessons strictly following the requested JSON schema.
-### CRITICAL INSTRUCTION:
-- Generate content in ${locale === 'ar' ? 'Arabic' : 'English'}.
-- JSON structure ({ title, content, quiz }) MUST be closed correctly.
-- Keep content concise to avoid token limits.
-- Return ONLY the raw JSON object.`;
+    const systemPrompt = `You are a senior academic instructor for Synapse AI.
+Generate a comprehensive technical lesson in ${locale === 'ar' ? 'Arabic' : 'English'}.
+Focus on technical depth and defensive engineering mindsets.
+Language: ${locale === 'ar' ? 'ARABIC (Saudi/Neutral)' : 'ENGLISH (Global/Technical)'}.`;
 
-    const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-001',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Generate a lesson about: ${topic}. Context: ${context}` }
-        ],
-        temperature: 0.2,
-        max_tokens: 4500,
-        response_format: { type: 'json_object' }
-      })
+    const { object: lessonData } = await generateObject({
+      model: openrouter('google/gemini-2.0-flash-001'),
+      schema: lessonSchema,
+      prompt: `Generate a detailed lesson about: ${topic}. \nContext: ${context || 'General technical education'}.`,
+      system: systemPrompt,
     });
 
-    if (!openRouterResponse.ok) {
-      throw new Error(`OpenRouter API error: ${openRouterResponse.status}`);
-    }
-
-    const aiData = await openRouterResponse.json();
-    let rawText = aiData.choices[0]?.message?.content || '{}';
-    
-    // --- ROBUST JSON SANITIZATION ---
-    // 1. Strip markdown code block backticks and 'json' keyword
-    rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
-
-    // 2. Find the first '{' and the last '}' to extract only the valid JSON object
-    const firstBrace = rawText.indexOf('{');
-    const lastBrace = rawText.lastIndexOf('}');
-
-    if (firstBrace !== -1 && lastBrace !== -1) {
-      rawText = rawText.substring(firstBrace, lastBrace + 1);
-    }
-    // --------------------------------
-
-    const parsedData = JSON.parse(rawText);
-
-    // Save to Database
+    // Save to Database with 100% user-isolation
     const { data: lessonRecord, error: dbError } = await supabase
       .from('generated_lessons')
       .insert({
         user_id: user.id,
         topic: topic || 'Untitled Lesson',
-        content: parsedData,
+        content: lessonData, // Now guaranteed structured JSON
         language: locale
       })
       .select('id')
@@ -94,13 +76,13 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       lessonId: lessonRecord.id,
-      ...parsedData
+      ...lessonData
     });
 
-  } catch (error) {
-    console.error('Generation Error:', error);
+  } catch (error: any) {
+    console.error('SYNAPSE VERCEL AI SDK ERROR:', error);
     return NextResponse.json(
-      { error: 'Failed to generate lesson' },
+      { error: 'Infrastructure failure during generation', details: error.message },
       { status: 500 }
     );
   }
