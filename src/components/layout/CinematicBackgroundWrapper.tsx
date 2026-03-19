@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 const CinematicBackground = dynamic(
-  () => import('./CinematicBackground').then((mod) => mod.CinematicBackground),
+  () => import('@/components/layout/CinematicBackground'),
   { ssr: false }
 );
 
