@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, PerformanceMonitor, Float, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import { useWebGLSupport } from '@/hooks/useWebGLSupport';
+import { WebGLErrorBoundary } from '@/components/home/ErrorBoundary';
 
 function ChatbotModel({ isHighPerf }: { isHighPerf: boolean }) {
   const modelRef = useRef<THREE.Group>(null);
@@ -74,35 +75,37 @@ export const ChatbotOrb = () => {
             <div className="w-8 h-8 rounded-full bg-brand-cyan shadow-[0_0_15px_#22D3EE]" />
           </div>
         ) : (
-          <Canvas 
-            dpr={dpr}
-            gl={{ 
-              alpha: true,
-              antialias: true,
-              powerPreference: "high-performance",
-              preserveDrawingBuffer: true
-            }}
-          >
-            <PerformanceMonitor 
-              onIncline={() => { setDpr(2); setIsHighPerf(true); }}
-              onDecline={() => { setDpr(1); setIsHighPerf(false); }}
-            />
-            <PerspectiveCamera makeDefault position={[0, 0, 4.5]} fov={35} />
-            
-            <ambientLight intensity={isHighPerf ? 1.5 : 2} />
-            <spotLight 
-              position={[5, 5, 5]} 
-              angle={0.15} 
-              penumbra={1} 
-              intensity={2} 
-              color="#ffffff" 
-            />
-            <pointLight position={[-5, -5, -5]} intensity={1} color="#22D3EE" />
-            
-            <Suspense fallback={null}>
-              <ChatbotModel isHighPerf={isHighPerf} />
-            </Suspense>
-          </Canvas>
+          <WebGLErrorBoundary>
+            <Canvas 
+              dpr={dpr}
+              gl={{ 
+                alpha: true,
+                antialias: true,
+                powerPreference: "high-performance",
+                preserveDrawingBuffer: true
+              }}
+            >
+              <PerformanceMonitor 
+                onIncline={() => { setDpr(2); setIsHighPerf(true); }}
+                onDecline={() => { setDpr(1); setIsHighPerf(false); }}
+              />
+              <PerspectiveCamera makeDefault position={[0, 0, 4.5]} fov={35} />
+              
+              <ambientLight intensity={isHighPerf ? 1.5 : 2} />
+              <spotLight 
+                position={[5, 5, 5]} 
+                angle={0.15} 
+                penumbra={1} 
+                intensity={2} 
+                color="#ffffff" 
+              />
+              <pointLight position={[-5, -5, -5]} intensity={1} color="#22D3EE" />
+              
+              <Suspense fallback={null}>
+                <ChatbotModel isHighPerf={isHighPerf} />
+              </Suspense>
+            </Canvas>
+          </WebGLErrorBoundary>
         )}
       </div>
     </div>

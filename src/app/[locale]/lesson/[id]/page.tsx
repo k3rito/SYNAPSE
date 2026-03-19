@@ -12,17 +12,19 @@ import { DynamicContentEngine } from '@/components/DynamicContentEngine';
 import { LessonSkeleton } from '@/components/LessonSkeleton';
 import { useTranslations } from 'next-intl';
 
+interface QuizItem {
+  id?: string;
+  question: string;
+  options: string[];
+  correct_answer: string;
+}
+
 interface LessonData {
   id?: string;
   topic?: string;
   title: string;
   content: string;
-  quiz: {
-    id?: string;
-    question: string;
-    options: string[];
-    correct_answer: string;
-  }[];
+  quiz: QuizItem[];
 }
 
 import { useGamificationStore } from '@/store/useGamificationStore';
@@ -91,18 +93,18 @@ export default function LessonPage() {
 
 
   const handleQuizSubmit = async () => {
-    if (!lessonData || Object.keys(selectedAnswers).length < (lessonData.quiz?.length || 0)) return;
+    if (!lessonData || Object.keys(selectedAnswers).length < (quizArray.length || 0)) return;
     
     setIsUpdating(true);
     let correctCount = 0;
-    lessonData.quiz.forEach((q, i) => {
+    quizArray.forEach((q, i) => {
       if (selectedAnswers[i] === q.correct_answer) correctCount++;
     });
     
-    setScore({ correct: correctCount, total: lessonData.quiz.length });
+    setScore({ correct: correctCount, total: quizArray.length });
     setQuizSubmitted(true);
     
-    const percentage = Math.round((correctCount / lessonData.quiz.length) * 100);
+    const percentage = Math.round((correctCount / quizArray.length) * 100);
     const nextStatus = percentage >= 50 ? 'completed' : 'pending';
     
     if (lessonData.id) {
@@ -138,6 +140,12 @@ export default function LessonPage() {
 
   console.log("Raw Lesson Data:", lessonData);
 
+  const quizArray = (Array.isArray(lessonData?.quiz) 
+    ? lessonData.quiz 
+    : typeof lessonData?.quiz === 'object' && lessonData?.quiz !== null 
+      ? Object.values(lessonData.quiz) 
+      : []) as QuizItem[];
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl animate-fade-in pb-32">
       <header className="mb-12">
@@ -171,11 +179,11 @@ export default function LessonPage() {
           </div>
           
           <div className="space-y-12">
-            {lessonData.quiz?.map((q, qIndex) => (
+            {quizArray.length > 0 && quizArray.map((q: QuizItem, qIndex: number) => (
               <div key={qIndex} className="space-y-6">
                 <p className="text-xl text-white font-inter font-medium leading-relaxed">{q.question}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {q.options.map((option, i) => {
+                  {q.options.map((option: string, i: number) => {
                     const isSelected = selectedAnswers[qIndex] === option;
                     const isCorrect = option === q.correct_answer;
                     let btnStyle = "bg-white/5 border-white/10 text-mid-gray hover:bg-white/10 hover:border-white/20";
@@ -204,7 +212,7 @@ export default function LessonPage() {
             {!quizSubmitted && (
               <button 
                 onClick={handleQuizSubmit} 
-                disabled={isUpdating || Object.keys(selectedAnswers).length < (lessonData.quiz?.length || 0)}
+                disabled={isUpdating || Object.keys(selectedAnswers).length < (quizArray.length || 0)}
                 className="w-full py-5 mt-12 bg-brand-cyan text-deep-black font-sora font-bold text-lg rounded-2xl hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(34,211,238,0.3)]"
               >
                 {isUpdating ? <span className="flex items-center justify-center gap-2 text-brand-cyan"><Loader2 className="w-6 h-6 animate-spin" /> Verifying...</span> : "Authorize Next Node Access"}
