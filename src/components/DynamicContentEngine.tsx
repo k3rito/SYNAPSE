@@ -68,10 +68,13 @@ const CodeBlock = memo(({ language, value }: { language: string; value: string }
 
 CodeBlock.displayName = 'CodeBlock';
 
-  const safeContent = typeof content === 'string' 
-    ? content 
+export function DynamicContentEngine({ content }: DynamicContentEngineProps) {
+  const isRtl = useLocale() === 'ar';
+  
+  const safeContent = Array.isArray(content) 
+    ? content.map(c => typeof c === 'string' ? c : JSON.stringify(c)).join('\n')
     : typeof content === 'object' && content !== null
-      ? JSON.stringify(content)
+      ? JSON.stringify(content, null, 2)
       : String(content || '');
 
   return (
@@ -194,7 +197,7 @@ CodeBlock.displayName = 'CodeBlock';
           ),
         }}
       >
-        {content}
+        {safeContent}
       </ReactMarkdown>
     </div>
   );
