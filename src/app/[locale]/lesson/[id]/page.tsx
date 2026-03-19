@@ -97,8 +97,9 @@ export default function LessonPage() {
     
     setIsUpdating(true);
     let correctCount = 0;
-    quizArray.forEach((q, i) => {
-      if (selectedAnswers[i] === q.correct_answer) correctCount++;
+    quizArray.forEach((q: any, i: number) => {
+      const correctAnswer = q?.correct_answer || q?.correct || q?.answer || '';
+      if (selectedAnswers[i] === correctAnswer) correctCount++;
     });
     
     setScore({ correct: correctCount, total: quizArray.length });
@@ -140,11 +141,23 @@ export default function LessonPage() {
 
   console.log("Raw Lesson Data:", lessonData);
 
-  const quizArray = (Array.isArray(lessonData?.quiz) 
-    ? lessonData.quiz 
-    : typeof lessonData?.quiz === 'object' && lessonData?.quiz !== null 
-      ? Object.values(lessonData.quiz) 
-      : []) as QuizItem[];
+  // Deep Array Extraction for the quiz
+  let extractedQuiz: any[] = [];
+  const rawQuiz = lessonData?.quiz;
+  
+  if (Array.isArray(rawQuiz)) {
+    extractedQuiz = rawQuiz;
+  } else if (rawQuiz && typeof rawQuiz === 'object') {
+    if (Array.isArray((rawQuiz as any).questions)) {
+      extractedQuiz = (rawQuiz as any).questions;
+    } else if (Array.isArray((rawQuiz as any).items)) {
+      extractedQuiz = (rawQuiz as any).items;
+    } else {
+      // Extract object values, filtering out non-objects to find potential question items
+      extractedQuiz = Object.values(rawQuiz).filter(v => typeof v === 'object' && v !== null);
+    }
+  }
+  const quizArray = extractedQuiz.flat();
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl animate-fade-in pb-32">
@@ -179,35 +192,42 @@ export default function LessonPage() {
           </div>
           
           <div className="space-y-12">
-            {(Array.isArray(quizArray) ? quizArray : []).map((q: QuizItem, qIndex: number) => (
-              <div key={qIndex} className="space-y-6">
-                <p className="text-xl text-white font-inter font-medium leading-relaxed">{q?.question || 'Diagnostic query missing'}</p>
+            {(Array.isArray(quizArray) ? quizArray : []).map((q: any, qIndex: number) => {
+              const questionText = q?.question || q?.q || q?.title || q?.text || 'Diagnostic query missing';
+              return (
+                <div key={qIndex} className="space-y-6">
+                  <p className="text-xl text-white font-inter font-medium leading-relaxed">{questionText}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {(Array.isArray(q?.options) ? q.options : []).map((option: string, i: number) => {
-                    const isSelected = selectedAnswers[qIndex] === option;
-                    const isCorrect = option === q.correct_answer;
-                    let btnStyle = "bg-white/5 border-white/10 text-mid-gray hover:bg-white/10 hover:border-white/20";
-                    if (quizSubmitted) {
-                      if (isCorrect) btnStyle = "bg-green-500/20 border-green-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]";
-                      else if (isSelected) btnStyle = "bg-red-500/20 border-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]";
-                      else btnStyle = "bg-white/5 border-white/10 text-mid-gray opacity-40";
-                    } else if (isSelected) {
-                      btnStyle = "bg-brand-cyan/10 border-brand-cyan text-brand-cyan shadow-[0_0_15px_rgba(34,211,238,0.2)]";
-                    }
-                    return (
-                      <button key={i} disabled={quizSubmitted} onClick={() => setSelectedAnswers(prev => ({ ...prev, [qIndex]: option }))}
-                        className={`text-left p-5 rounded-xl border transition-all duration-300 font-inter ${btnStyle}`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-base">{option}</span>
-                          {quizSubmitted && isCorrect && <CheckCircle2 className="w-5 h-5 text-green-400" />}
-                        </div>
-                      </button>
-                    );
-                  })}
+                  {(() => {
+                    const options = Array.isArray(q?.options) ? q.options : Array.isArray(q?.choices) ? q.choices : Array.isArray(q?.answers) ? q.answers : [];
+                    const correctAnswer = q?.correct_answer || q?.correct || q?.answer || '';
+                    return options.map((option: string, i: number) => {
+                      const isSelected = selectedAnswers[qIndex] === option;
+                      const isCorrect = option === correctAnswer;
+                      let btnStyle = "bg-white/5 border-white/10 text-mid-gray hover:bg-white/10 hover:border-white/20";
+                      if (quizSubmitted) {
+                        if (isCorrect) btnStyle = "bg-green-500/20 border-green-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]";
+                        else if (isSelected) btnStyle = "bg-red-500/20 border-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]";
+                        else btnStyle = "bg-white/5 border-white/10 text-mid-gray opacity-40";
+                      } else if (isSelected) {
+                        btnStyle = "bg-brand-cyan/10 border-brand-cyan text-brand-cyan shadow-[0_0_15px_rgba(34,211,238,0.2)]";
+                      }
+                      return (
+                        <button key={i} disabled={quizSubmitted} onClick={() => setSelectedAnswers(prev => ({ ...prev, [qIndex]: option }))}
+                          className={`text-left p-5 rounded-xl border transition-all duration-300 font-inter ${btnStyle}`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-base">{option}</span>
+                            {quizSubmitted && isCorrect && <CheckCircle2 className="w-5 h-5 text-green-400" />}
+                          </div>
+                        </button>
+                      );
+                    });
+                  })()}
                 </div>
               </div>
-            ))}
+            );
+          })}
 
             {!quizSubmitted && (
               <button 
