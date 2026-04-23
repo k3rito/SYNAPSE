@@ -1,0 +1,62 @@
+name: Supabase Keep Alive
+
+on:
+  # تشغيل تلقائي كل 3 أيام (بتوقيت UTC)
+  schedule:
+    - cron: "0 4 */3 * *"
+
+  # تشغيل يدوي من واجهة GitHub Actions عند الحاجة
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    name: Ping Supabase REST API
+    runs-on: ubuntu-latest
+
+    # متغيرات عامة للوظيفة
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      # غيّر اسم الجدول أدناه للجدول الذي تريد عمل Keep Alive له
+      TABLE_NAME: profiles
+
+    steps:
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          # التحقق من وجود الأسرار قبل تنفيذ الطلب
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "SUPABASE_URL أو SUPABASE_ANON_KEY غير مضبوط في Secrets"
+            exit 1
+          fi
+
+      - name: Send keep-alive request
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # نبني رابط REST لقراءة صف واحد فقط من الجدول المحدد
+          API_URL="${SUPABASE_URL}/rest/v1/${TABLE_NAME}?select=*&limit=1"
+
+          echo "Pinging: $API_URL"
+
+          # نحفظ جسم الاستجابة في ملف ونقرأ فقط كود HTTP للتحقق
+          HTTP_STATUS=$(curl --silent --show-error \
+            --output response.json \
+            --write-out "%{http_code}" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Accept: application/json" \
+            "$API_URL")
+
+          echo "HTTP status: $HTTP_STATUS"
+
+          # اعتبر أي 2xx نجاحًا
+          if [[ ! "$HTTP_STATUS" =~ ^2 ]]; then
+            echo "فشل طلب Keep Alive. Response body:"
+            cat response.json
+            exit 1
+          fi
+
+          echo "Supabase Keep Alive succeeded"
